@@ -9,6 +9,7 @@
         <el-menu-item index="/pests">病虫害手册</el-menu-item>
         <el-menu-item index="/calendar">季节日历</el-menu-item>
         <el-menu-item index="/garden">我的花园</el-menu-item>
+        <el-menu-item index="/care-logs">养护日志</el-menu-item>
         <el-menu-item index="/questions">问答社区</el-menu-item>
         <el-menu-item index="/quiz">养护测验</el-menu-item>
       </el-menu>

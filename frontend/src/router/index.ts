@@ -11,6 +11,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/pests', name: 'pests', component: () => import('@/pages/PestManual.vue'), meta: { title: '病虫害手册' } },
   { path: '/calendar', name: 'calendar', component: () => import('@/pages/SeasonCalendar.vue'), meta: { title: '季节养护日历', requiresAuth: true } },
   { path: '/garden', name: 'garden', component: () => import('@/pages/Garden.vue'), meta: { title: '我的花园', requiresAuth: true } },
+  { path: '/care-logs', name: 'careLogs', component: () => import('@/pages/CareLogs.vue'), meta: { title: '养护日志', requiresAuth: true } },
   { path: '/questions', name: 'questions', component: () => import('@/pages/QuestionCommunity.vue'), meta: { title: '问答社区' } },
   { path: '/questions/:id', name: 'questionDetail', component: () => import('@/pages/QuestionDetail.vue'), meta: { title: '问题详情' } },
   { path: '/quiz', name: 'quiz', component: () => import('@/pages/Quiz.vue'), meta: { title: '养护测验' } },

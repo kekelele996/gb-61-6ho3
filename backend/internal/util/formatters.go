@@ -80,3 +80,21 @@ func ReminderStatusText(s string) string {
 		return "未知"
 	}
 }
+
+// CareLogTypeText maps a care log type to Chinese text.
+func CareLogTypeText(t string) string {
+	switch t {
+	case "watering":
+		return "浇水"
+	case "fertilizing":
+		return "施肥"
+	case "medication":
+		return "用药"
+	case "pruning":
+		return "修剪"
+	case "observation":
+		return "观察"
+	default:
+		return "未知"
+	}
+}

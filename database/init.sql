@@ -96,6 +96,21 @@ CREATE TABLE IF NOT EXISTS user_gardens (
   UNIQUE KEY uk_garden_user_plant (user_id, plant_species_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS care_logs (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  garden_id BIGINT UNSIGNED NOT NULL,
+  log_date DATE NOT NULL,
+  log_type VARCHAR(16) NOT NULL,
+  note VARCHAR(512) DEFAULT '',
+  image_url VARCHAR(255) DEFAULT '',
+  created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+  updated_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  UNIQUE KEY uk_carelog_user_garden_date_type (user_id, garden_id, log_date, log_type),
+  KEY idx_carelogs_user_date (user_id, log_date),
+  KEY idx_carelogs_garden (garden_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS questions (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT UNSIGNED NOT NULL,
@@ -147,6 +162,16 @@ INSERT INTO disease_pests (plant_species_id, name, symptoms, cause, treatment, r
 INSERT INTO care_reminders (user_id, plant_species_id, task_title, remind_date, frequency, status) VALUES
   (2, 4, '给月季补充缓释肥', DATE_ADD(CURDATE(), INTERVAL 3 DAY), 'monthly', 'pending'),
   (2, 1, '龟背竹叶片擦拭除尘', DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'weekly', 'pending');
+
+INSERT INTO user_gardens (user_id, plant_species_id, nickname, owned_since, location) VALUES
+  (2, 4, '阳台月季', DATE_SUB(CURDATE(), INTERVAL 420 DAY), '南向阳台'),
+  (2, 1, '客厅龟背竹', DATE_SUB(CURDATE(), INTERVAL 180 DAY), '客厅角落');
+
+INSERT INTO care_logs (user_id, garden_id, log_date, log_type, note) VALUES
+  (2, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 'watering', '盆土表面干透，浇透一次。'),
+  (2, 1, DATE_SUB(CURDATE(), INTERVAL 3 DAY), 'fertilizing', '补充缓释肥一小勺。'),
+  (2, 1, DATE_SUB(CURDATE(), INTERVAL 5 DAY), 'pruning', '剪掉残花和细弱枝。'),
+  (2, 2, DATE_SUB(CURDATE(), INTERVAL 2 DAY), 'observation', '新叶展开，状态良好。');
 
 INSERT INTO questions (user_id, title, content, images, status) VALUES
   (2, '新买的月季叶子发黄怎么办？', '刚上盆一周，叶片边缘发黄，是不是浇水太多？', JSON_ARRAY(), 'open'),

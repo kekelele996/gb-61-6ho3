@@ -8,15 +8,17 @@
           <el-table :data="gardenItems" empty-text="花园还是空的，去品种库添加吧">
             <el-table-column label="植物">
               <template #default="{ row }">
-                <span class="garden-name">{{ row.nickname || row.plant_species_id }}</span>
+                <span class="garden-name">{{ plantNames[row.plant_species_id] || `品种#${row.plant_species_id}` }}</span>
+                <span v-if="row.nickname" class="garden-nick">（{{ row.nickname }}）</span>
               </template>
             </el-table-column>
             <el-table-column label="位置" prop="location" />
             <el-table-column label="拥有时间">
               <template #default="{ row }">{{ formatDate(row.owned_since) }}</template>
             </el-table-column>
-            <el-table-column label="操作" width="100">
+            <el-table-column label="操作" width="170">
               <template #default="{ row }">
+                <el-button size="small" type="primary" plain @click="$router.push(`/care-logs?garden_id=${row.id}`)">养护日志</el-button>
                 <el-button size="small" type="danger" @click="remove(row.id)">移除</el-button>
               </template>
             </el-table-column>
@@ -47,6 +49,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import ReminderList from '@/components/common/ReminderList.vue'
 import { listGardens, removeGarden } from '@/api/garden'
+import { getPlant } from '@/api/plant'
 import { listFavorites } from '@/api/favorite'
 import { listReminders, deleteReminder, updateReminderStatus } from '@/api/reminder'
 import { FavoriteTargetTypeMap, type Favorite, type FavoriteTargetType } from '@/constants/favorite'
@@ -54,14 +57,29 @@ import { formatDate } from '@/utils/dateFormat'
 import type { CareReminder, UserGarden } from '@/types/api'
 
 const gardenItems = ref<UserGarden[]>([])
+const plantNames = ref<Record<number, string>>({})
 const favorites = ref<Favorite[]>([])
 const reminders = ref<CareReminder[]>([])
 
 onMounted(async () => {
   gardenItems.value = await listGardens()
+  await loadPlantNames()
   favorites.value = await listFavorites()
   reminders.value = await listReminders()
 })
+
+async function loadPlantNames() {
+  const ids = [...new Set(gardenItems.value.map((g) => g.plant_species_id))]
+  await Promise.all(
+    ids.map(async (id) => {
+      try {
+        plantNames.value[id] = (await getPlant(id)).name
+      } catch {
+        // species may have been removed; table falls back to the id
+      }
+    }),
+  )
+}
 
 async function remove(id: number) {
   await removeGarden(id)
@@ -82,4 +100,5 @@ async function removeReminder(id: number) {
 .page { max-width: 1200px; margin: 0 auto; }
 .block { margin-top: 16px; }
 .garden-name { font-weight: 600; }
+.garden-nick { color: #888; font-size: 13px; }
 </style>

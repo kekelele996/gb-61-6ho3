@@ -152,6 +152,9 @@ gb-61/
 | POST | /api/v1/gardens | 登录（限流） | 加入我的花园 |
 | PUT | /api/v1/gardens/:id/reminder | 登录 | 关联养护提醒 |
 | DELETE | /api/v1/gardens/:id | 登录 | 移除花园条目 |
+| GET | /api/v1/care-logs | 登录 | 养护日志列表（按日期倒序，可按 garden_id/type 筛选）+ 近7天各类型次数 |
+| POST | /api/v1/care-logs | 登录（限流） | 记录养护（同植物同天同类型自动更新原记录，未来日期拒绝） |
+| DELETE | /api/v1/care-logs/:id | 登录 | 删除自己的养护日志 |
 | GET | /api/v1/questions | 公开 | 问答列表 |
 | GET | /api/v1/questions/:id | 公开 | 问题详情 |
 | GET | /api/v1/questions/:id/answers | 公开 | 问题回答列表 |
@@ -177,6 +180,11 @@ gb-61/
 
 - 后端：`backend/internal/constants/favorite.go`（定义）、`backend/internal/model/favorite.go`（模型）、`backend/internal/service/favorite_service.go`（校验）、`backend/internal/constants/log_templates.go`、`database/init.sql`
 - 前端：`frontend/src/constants/favorite.ts`（定义）、`frontend/src/components/common/FavoriteButton.vue`（交互）、`frontend/src/pages/Garden.vue` 与 `frontend/src/pages/Profile.vue`（收藏夹列表）
+
+### CareLogType（养护日志类型：watering/fertilizing/medication/pruning/observation）
+
+- 后端：`backend/internal/constants/care_log.go`（定义）、`backend/internal/model/care_log.go`（唯一索引 user+garden+date+type）、`backend/internal/service/care_log_service.go`（归属/未来日期/幂等更新校验）、`backend/internal/util/formatters.go`（CareLogTypeText）、`backend/internal/constants/log_templates.go`、`database/init.sql`
+- 前端：`frontend/src/constants/careLog.ts`（定义）、`frontend/src/pages/CareLogs.vue`（记录表单/类型筛选/近7天统计）、`frontend/src/pages/Garden.vue`（花园入口）
 
 ## 横切关注点
 
