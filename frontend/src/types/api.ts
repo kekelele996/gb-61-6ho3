@@ -44,6 +44,30 @@ export interface UserGarden {
   created_at: string
 }
 
+export type CareLogType = 'watering' | 'fertilizing' | 'pest_control' | 'pruning' | 'observation'
+
+export interface CareLog {
+  id: number
+  user_id: number
+  garden_id: number
+  log_date: string
+  log_type: CareLogType
+  note: string
+  images: string[]
+  created_at: string
+  updated_at: string
+}
+
+export interface CareLogTypeCount {
+  log_type: CareLogType
+  count: number
+}
+
+export interface CareLogListData {
+  list: CareLog[]
+  weekly_stat: CareLogTypeCount[]
+}
+
 export interface DiseasePest {
   id: number
   plant_species_id: number

@@ -52,7 +52,7 @@ func (s *UserGardenService) List(userID uint) ([]model.UserGarden, error) {
 
 // Remove deletes a garden item owned by the user.
 func (s *UserGardenService) Remove(userID, id uint) error {
-	g, err := s.repo.Find(userID, id)
+	g, err := s.repo.FindByUser(userID, id)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			return util.NewAppError(404, constants.CodeNotFound, fmt.Sprintf("UserGarden[id=%d] not found", id))

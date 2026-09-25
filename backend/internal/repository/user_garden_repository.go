@@ -53,6 +53,20 @@ func (r *UserGardenRepository) FindByID(id uint) (*model.UserGarden, error) {
 	return &g, nil
 }
 
+// FindByUser locates a garden item scoped to its owner. It is the ownership
+// guard used by nested resources such as care logs: a non-owner or a missing
+// id both resolve to ErrNotFound.
+func (r *UserGardenRepository) FindByUser(userID, id uint) (*model.UserGarden, error) {
+	var g model.UserGarden
+	if err := r.db.Where("user_id = ? AND id = ?", userID, id).First(&g).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return &g, nil
+}
+
 // Update persists a garden item.
 func (r *UserGardenRepository) Update(g *model.UserGarden) error {
 	return r.db.Save(g).Error

@@ -14,6 +14,7 @@ const (
 	MsgArticleSaved         = "文章已保存"
 	MsgReminderCreated      = "养护提醒已创建"
 	MsgReminderDone         = "提醒已标记完成"
+	MsgCareLogSaved         = "养护日志已保存"
 	MsgQuestionCreated      = "问题发布成功"
 	MsgAnswerAdopted        = "已采纳该回答"
 	MsgAnswerLiked          = "点赞成功"

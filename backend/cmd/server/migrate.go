@@ -2,6 +2,7 @@ package main
 
 import (
 	"log/slog"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -19,6 +20,7 @@ func migrate(db *gorm.DB) error {
 		&model.CareReminder{},
 		&model.Favorite{},
 		&model.UserGarden{},
+		&model.CareLog{},
 		&model.Question{},
 		&model.Answer{},
 	)
@@ -86,6 +88,25 @@ func seed(db *gorm.DB) error {
 		return err
 	}
 
+	gardens := []model.UserGarden{
+		{UserID: user.ID, PlantSpeciesID: plants[3].ID, Nickname: "阳台月季", OwnedSince: time.Now().AddDate(0, 0, -200), Location: "南向阳台"},
+		{UserID: user.ID, PlantSpeciesID: plants[0].ID, Nickname: "客厅龟背竹", OwnedSince: time.Now().AddDate(0, 0, -300), Location: "客厅角落"},
+	}
+	if err := db.Create(&gardens).Error; err != nil {
+		return err
+	}
+
+	careLogs := []model.CareLog{
+		{UserID: user.ID, GardenID: gardens[0].ID, LogDate: time.Now(), LogType: constants.CareLogWatering, Note: "今早浇透，盆底见水流出。", Images: "[]"},
+		{UserID: user.ID, GardenID: gardens[0].ID, LogDate: time.Now().AddDate(0, 0, -2), LogType: constants.CareLogPestControl, Note: "发现少量蚜虫，喷施苦参碱。", Images: "[]"},
+		{UserID: user.ID, GardenID: gardens[0].ID, LogDate: time.Now().AddDate(0, 0, -5), LogType: constants.CareLogFertilizing, Note: "沿盆边撒了缓释肥一小勺。", Images: "[]"},
+		{UserID: user.ID, GardenID: gardens[1].ID, LogDate: time.Now().AddDate(0, 0, -3), LogType: constants.CareLogWatering, Note: "土表干了两厘米，浇透。", Images: "[]"},
+		{UserID: user.ID, GardenID: gardens[1].ID, LogDate: time.Now().AddDate(0, 0, -10), LogType: constants.CareLogObservation, Note: "新叶展开一片，长势良好。", Images: "[]"},
+	}
+	if err := db.Create(&careLogs).Error; err != nil {
+		return err
+	}
+
 	questions := []model.Question{
 		{UserID: user.ID, Title: "新买的月季叶子发黄怎么办？", Content: "刚上盆一周，叶片边缘发黄，是不是浇水太多？", Status: "open"},
 		{UserID: user.ID, Title: "多肉徒长了如何补救？", Content: "冬季光照不足，多肉长高了，可以砍头吗？", Status: "open"},
@@ -104,6 +125,7 @@ func seed(db *gorm.DB) error {
 
 	logger.Info("gbplantwiki seed data created",
 		"users", 2, "plants", len(plants), "articles", len(articles),
-		"pests", len(pests), "reminders", len(reminders), "questions", len(questions), "answers", len(answers))
+		"pests", len(pests), "reminders", len(reminders), "gardens", len(gardens),
+		"care_logs", len(careLogs), "questions", len(questions), "answers", len(answers))
 	return nil
 }
